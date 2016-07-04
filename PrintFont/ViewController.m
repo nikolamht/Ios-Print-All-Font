@@ -8,15 +8,49 @@
 
 #import "ViewController.h"
 
-@interface ViewController ()
+
+@interface ViewController ()<UITableViewDelegate , UITableViewDataSource>
+{
+    UITableView *table;
+    NSArray *font;
+}
 
 @end
 
 @implementation ViewController
 
+static NSString *ident = @"cell";
+
 - (void)viewDidLoad {
     [super viewDidLoad];
-    // Do any additional setup after loading the view, typically from a nib.
+    table = [[UITableView alloc] initWithFrame:CGRectMake(0, 0, self.view.bounds.size.width, self.view.bounds.size.height) style:UITableViewStyleGrouped];
+    table.delegate = self;
+    table.dataSource = self;
+    [self.view addSubview:table];
+    
+    font = [UIFont familyNames];
+}
+
+- (NSInteger)numberOfSectionsInTableView:(UITableView *)tableView{
+    return [font count];
+}
+
+- (NSInteger)tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section
+{
+    NSArray *fontNames = [UIFont fontNamesForFamilyName:(NSString *)[font objectAtIndex:section]];
+    return [fontNames count];
+}
+
+- (UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath{
+    UITableViewCell *cell = [tableView dequeueReusableCellWithIdentifier:ident];
+    
+    if (!cell) {
+        cell = [[UITableViewCell alloc] initWithStyle:UITableViewCellStyleDefault reuseIdentifier:ident];
+    }
+    NSArray *fontNames = [UIFont fontNamesForFamilyName:(NSString *)[font objectAtIndex:indexPath.section]];
+    cell.textLabel.text = [NSString stringWithFormat:@"我是字体%@",(NSString *)[fontNames objectAtIndex:indexPath.row]];
+    cell.textLabel.font = [UIFont fontWithName:(NSString *)[fontNames objectAtIndex:indexPath.row] size:15];
+    return cell;
 }
 
 - (void)didReceiveMemoryWarning {
